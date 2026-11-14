@@ -1,0 +1,58 @@
+class Ticket:
+
+    def __init__(self, ticket_id, title, priority):
+        if ticket_id <=0 or type(ticket_id) != int:
+            raise ValueError ("the ticket_id must be a positive integer")
+        self._ticket_id = ticket_id
+        self._title = title
+        self._priority = priority
+        self._status = "OPEN"
+        self._assignee = None
+
+    @property
+    def assignee(self):
+        return self._assignee
+    @property
+    def status(self):
+        return self._status
+
+    def assign(self,username ):
+        if type (username) =="":
+            raise ValueError("username must not be empty")
+        self._assignee = username
+
+    def start(self):
+        if  self._status != "OPEN":
+            raise ValueError("start open ticket")
+        if self._assignee is None:
+            raise ValueError("ticket must be assigned first")
+        self._status = "IN_PROGRESS"
+
+    def resolve(self):
+        if self._status != "IN_PROGRESS":
+            raise ValueError("can only resolve an IN_PROGRESS ticket")
+        self._status = "RESOLVED"
+
+    def reopen(self):
+        if self._status != "RESOLVED":
+            raise ValueError("can only reopen a RESOLVED ticket")
+        self._status = "OPEN"
+
+    def to_dict(self):
+        return {
+            "ticket_id": self._ticket_id,
+            "title": self._title,
+            "priority": self._priority,
+            "assignee": self._assignee,
+            "status": self._status
+        }
+
+
+if __name__ == "__main__":
+    t = Ticket(1, "VPorN access", "HIGH")
+    t.assign("AgentA")
+    t.start()
+    t.resolve()
+    t.reopen()
+    print(t.to_dict()["status"] == "OPEN")  # True
+    Ticket(0, "Invalid", "LOW")
